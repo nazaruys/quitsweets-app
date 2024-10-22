@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, TextInput } from 'react-native';
+import AntDesign from '@expo/vector-icons/AntDesign';
+
 import Screen from '../components/Screen';
 import colors from '../config/colors';
 import DayPicker from '../components/DayPicker';
@@ -10,6 +12,7 @@ function HomeScreen(props) {
     const [selectedMonth, setSelectedMonth] = useState(null);
     const [selectedYear, setSelectedYear] = useState(null);
     const [days, setDays] = useState([]);
+    const [quantity, setQuantity] = useState("1"); // State to manage the product quantity
 
     const months = [
         "January", "February", "March", "April", "May", "June", 
@@ -45,9 +48,72 @@ function HomeScreen(props) {
     }, []);
 
     const handleButtonPress = () => {
-        // Handle button press action here
         console.log(`Selected Date: ${selectedYear} ${selectedMonth} ${selectedDay}`);
     };
+
+    const handleIncrement = () => {
+        const steps = ["1", "0.75", "0.50", "0.25", "0.20", "0.15", "0.10", "0.05", "0.03"];
+        setQuantity(prevQuantity => {
+            if (prevQuantity === "") {
+                return "1"
+            }
+            const currentIndex = steps.indexOf(prevQuantity);
+        
+            // If the current quantity is found in the steps array and not "1", move to the previous step
+            if (currentIndex > 0) {
+                return steps[currentIndex - 1]; // Move to the previous step
+            }
+        
+            // If the quantity is "1" or greater, increment by 1 but not greater than 999
+            const numericQuantity = parseFloat(prevQuantity);
+            if (numericQuantity >= 1) {
+                const incrementedValue = numericQuantity + 1;
+                // Ensure the incremented value does not exceed 999
+                return incrementedValue <= 999 ? incrementedValue.toString() : '999';
+            }
+        
+            return prevQuantity; // If it doesn't match, keep the value unchanged
+        });
+    };
+    
+    
+
+    const handleDecrement = () => {
+        const steps = ["1", "0.75", "0.50", "0.25", "0.20", "0.15", "0.10", "0.05", "0.03"];
+        setQuantity(prevQuantity => {
+            const numericQuantity = parseFloat(prevQuantity);
+    
+            // If the current quantity is greater than 1, decrement by 1
+            if (numericQuantity > 1) {
+                return (numericQuantity - 1).toString().substring(0, 4); // Return first 4 characters
+            }
+    
+            const currentIndex = steps.indexOf(prevQuantity);
+    
+            // If the current quantity is not the last one in steps, decrement it
+            if (currentIndex >= 0 && currentIndex < steps.length - 1) {
+                return steps[currentIndex + 1].substring(0, 4); // Move to the next step and return first 4 characters
+            }
+    
+            // If at the last step, keep the quantity unchanged
+            return prevQuantity.substring(0, 4); // Return first 4 characters
+        });
+    };
+    
+
+    const handleQuantityChange = (text) => {
+        // Replace commas with dots
+        let newText = text.replace(',', '.');
+    
+        // Allow only numbers and a single dot
+        if (/^\d*\.?\d*$/.test(newText)) {
+            // Ensure the number is less than 999
+            if (parseFloat(newText) < 999 || newText === '') {
+                setQuantity(newText);
+            }
+        }
+    };
+    
 
     return (
         <Screen style={styles.screen}>
@@ -67,7 +133,20 @@ function HomeScreen(props) {
                     <View style={styles.contentProductSection}>
                         <View style={styles.chooseProductButton}></View>
                         <View style={styles.contentProductSectionRight}>
-                            <AppText style={styles.quantityText}>- 1 +</AppText>
+                            <View style={styles.quantityContainer}>
+                                <TouchableOpacity style={styles.quantityButton} onPress={handleDecrement}>
+                                    <AntDesign name="minus" size={24} color="white" />
+                                </TouchableOpacity>
+                                <TextInput
+                                    style={styles.quantityText}
+                                    value={quantity}
+                                    onChangeText={handleQuantityChange}
+                                    keyboardType="numeric"
+                                />
+                                <TouchableOpacity style={styles.quantityButton} onPress={handleIncrement}>
+                                    <AntDesign name="plus" size={24} color="white" />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </View>
@@ -111,9 +190,26 @@ const styles = StyleSheet.create({
         width: 100,
         borderRadius: 10
     },
+    quantityContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    quantityButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 40,
+        width: 40,
+        backgroundColor: colors.secondary,
+        borderRadius: 5,
+    },
+    quantityButtonText: {
+        fontSize: 30,
+        color: '#fff',
+    },
     quantityText: {
         fontSize: 28,
-        color: colors.background
+        color: colors.background,
+        marginHorizontal: 20, // Spacing between the buttons
     },
     button: {
         position: 'absolute',
