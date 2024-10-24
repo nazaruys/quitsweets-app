@@ -6,6 +6,7 @@ import Screen from '../components/Screen';
 import colors from '../config/colors';
 import DayPicker from '../components/DayPicker';
 import AppText from '../components/AppText';
+import ProductCard from '../components/ProductCard';
 
 function HomeScreen(props) {
     const [selectedDay, setSelectedDay] = useState(null);
@@ -13,6 +14,7 @@ function HomeScreen(props) {
     const [selectedYear, setSelectedYear] = useState(null);
     const [days, setDays] = useState([]);
     const [quantity, setQuantity] = useState("1"); // State to manage the product quantity
+    const [note, setNote] = useState("");
 
     const months = [
         "January", "February", "March", "April", "May", "June", 
@@ -129,26 +131,48 @@ function HomeScreen(props) {
                     selectedYear={selectedYear}
                     setSelectedYear={setSelectedYear}
                 />
-                <View style={styles.content}>
-                    <View style={styles.contentProductSection}>
-                        <View style={styles.chooseProductButton}></View>
-                        <View style={styles.contentProductSectionRight}>
-                            <View style={styles.quantityContainer}>
-                                <TouchableOpacity style={styles.quantityButton} onPress={handleDecrement}>
-                                    <AntDesign name="minus" size={24} color="white" />
-                                </TouchableOpacity>
-                                <TextInput
-                                    style={styles.quantityText}
-                                    value={quantity}
-                                    onChangeText={handleQuantityChange}
-                                    keyboardType="numeric"
-                                />
-                                <TouchableOpacity style={styles.quantityButton} onPress={handleIncrement}>
-                                    <AntDesign name="plus" size={24} color="white" />
-                                </TouchableOpacity>
+                <View style={styles.container}>
+                    <View style={styles.content}>
+                        <View style={styles.contentProductSection}>
+                            <View style={styles.chooseProductButton}></View>
+                            <View style={styles.contentProductSectionRight}>
+                                <View style={styles.quantityContainer}>
+                                    <TouchableOpacity style={styles.quantityButton} onPress={handleDecrement}>
+                                        <AntDesign name="minus" size={24} color="white" />
+                                    </TouchableOpacity>
+                                    <TextInput
+                                        style={styles.quantityText}
+                                        value={quantity}
+                                        onChangeText={handleQuantityChange}
+                                        keyboardType="numeric"
+                                    />
+                                    <TouchableOpacity style={styles.quantityButton} onPress={handleIncrement}>
+                                        <AntDesign name="plus" size={24} color="white" />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
+
+                        {/* TextInput for note */}
+                        <TextInput
+                            style={styles.noteInput}
+                            placeholder="Enter a note"
+                            placeholderTextColor="rgba(255, 255, 255, 0.7)" // White text with some opacity for the placeholder
+                            maxLength={255}
+                            value={note}
+                            onChangeText={setNote}
+                            multiline={false} // Ensures it's a single line
+                        />
+                        {/* New smaller button */}
+                        <TouchableOpacity style={styles.smallButton} onPress={handleButtonPress}>
+                            <AppText style={styles.smallButtonText}>Add Sweet</AppText>
+                        </TouchableOpacity>
                     </View>
+                    <ProductCard />
+                    <ProductCard />
+                    <ProductCard />
+                    <ProductCard />
+                    <ProductCard />
                 </View>
             </ScrollView>
             <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
@@ -161,7 +185,6 @@ function HomeScreen(props) {
 const styles = StyleSheet.create({
     screen: {
         backgroundColor: colors.backgroundSecondary,
-        paddingVertical: 10,
         flex: 1,
     },
     scrollContainer: {
@@ -169,11 +192,13 @@ const styles = StyleSheet.create({
     },
     content: {
         backgroundColor: colors.primary,
-        marginHorizontal: '5%',
         borderRadius: 10,
         paddingHorizontal: 15,
         paddingVertical: 10,
         marginVertical: 20
+    },
+    container: {
+        paddingHorizontal: '5%'
     },
     contentProductSection: {
         flexDirection: 'row',
@@ -202,14 +227,18 @@ const styles = StyleSheet.create({
         backgroundColor: colors.secondary,
         borderRadius: 5,
     },
-    quantityButtonText: {
-        fontSize: 30,
-        color: '#fff',
-    },
     quantityText: {
         fontSize: 28,
         color: colors.background,
         marginHorizontal: 20, // Spacing between the buttons
+    },
+    noteInput: {
+        backgroundColor: colors.backgroundTertiary,
+        color: 'white', // White text for the input
+        borderRadius: 10,
+        padding: 10,
+        marginTop: 20, // Add some margin below the quantity section
+        fontSize: 16, // Adjust font size as needed
     },
     button: {
         position: 'absolute',
@@ -226,6 +255,20 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 24,
     },
+    smallButton: {
+        backgroundColor: colors.tertiary,
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 30, // Adjust margin to position the button
+    },
+    smallButtonText: {
+        color: '#fff',
+        fontSize: 18,  // Smaller font size for the button
+    },
 });
+
 
 export default HomeScreen;
