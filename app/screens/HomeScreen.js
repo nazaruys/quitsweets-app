@@ -7,14 +7,17 @@ import colors from '../config/colors';
 import DayPicker from '../components/DayPicker';
 import AppText from '../components/AppText';
 import ProductCard from '../components/ProductCard';
+import { useNavigation } from '@react-navigation/native';
 
-function HomeScreen(props) {
+function HomeScreen() {
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState(null);
     const [selectedYear, setSelectedYear] = useState(null);
     const [days, setDays] = useState([]);
     const [quantity, setQuantity] = useState("1"); // State to manage the product quantity
     const [note, setNote] = useState("");
+
+    const navigation = useNavigation();
 
     const months = [
         "January", "February", "March", "April", "May", "June", 
@@ -134,7 +137,7 @@ function HomeScreen(props) {
                 <View style={styles.container}>
                     <View style={styles.content}>
                         <View style={styles.contentProductSection}>
-                            <View style={styles.chooseProductButton}></View>
+                            <TouchableOpacity style={styles.chooseProductButton} onPress={() => navigation.navigate('ChooseProduct')}></TouchableOpacity>
                             <View style={styles.contentProductSectionRight}>
                                 <View style={styles.quantityContainer}>
                                     <TouchableOpacity style={styles.quantityButton} onPress={handleDecrement}>
